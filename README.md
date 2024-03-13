@@ -1,4 +1,4 @@
-# Pipeline Overview
+ # Pipeline Overview
 ![pipeline](./data/pipeline.png)
 
 # Confusions
@@ -36,4 +36,4 @@
 
 # Improvements:
 1. there are other ways to handle this task too, i do have couple of the solutions let's discuss that in personal meeting
-2. api request handling could be improved but i focused on overall pipeline rather writing perfect api
+2. api request handling could be improved but i focused on overall pipeline rather writing perfect api 
