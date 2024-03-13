@@ -1,0 +1,9 @@
+{
+	"name": "HourlyRateValue",
+	"namespace": "com.learn.avro",
+	"type": "record",
+	"fields" : [
+		{ "name": "request_count", "type": "long" },
+		{ "name": "invalid_count", "type": "long" }
+	]
+}

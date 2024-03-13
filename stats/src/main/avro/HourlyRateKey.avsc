@@ -1,0 +1,9 @@
+{
+	"name": "HourlyRateKey",
+	"namespace": "com.learn.avro",
+	"type": "record",
+	"fields" : [
+		{ "name": "customer_id", "type": "long" },
+		{ "name": "time", "type": "long" }
+	]
+}
