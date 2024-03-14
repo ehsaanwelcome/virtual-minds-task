@@ -37,13 +37,14 @@ dependencies {
 	implementation 'org.postgresql:postgresql'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'io.gatling:gatling-core:3.10.4'
-	testImplementation 'io.gatling.highcharts:gatling-charts-highcharts:3.10.4'
+	testImplementation 'org.junit.vintage:junit-vintage-engine'
+	testImplementation 'io.rest-assured:rest-assured'
 }
 
 springBoot {
 	mainClass = "com.learn.vm.VmApplication"
 }
-//tasks.named('test') {
-//	useJUnitPlatform()
-//}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}

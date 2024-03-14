@@ -4,11 +4,13 @@ import com.learn.vm.models.EventError;
 import com.learn.vm.models.StatsResponse;
 import com.learn.vm.services.EventsService;
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.commons.collections4.MultiValuedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
@@ -46,7 +48,7 @@ public class EventsController {
             case InvalidCustomer -> "Invalid Customer";
             case DisabledCustomer -> "Disabled Customer";
             case BlockedIP -> "Blocked IP";
-            case BlockUA -> "Block UA";
+            case BlockUA -> "Blocked UA";
             default -> "Unknown Error";
         };
     }
@@ -73,19 +75,24 @@ public class EventsController {
     }
 
     @GetMapping(value = "/stats")
-    ResponseEntity<StatsResponse> stats(@RequestParam long customerId, @RequestParam @DateTimeFormat(pattern = "dd.MM.yyyy") Optional<Date> date, @RequestParam Optional<Integer> day) {
+    ResponseEntity<Object> stats(@RequestParam long customerId, @RequestParam @DateTimeFormat(pattern = "dd.MM.yyyy") Optional<Date> date, @RequestParam Optional<Integer> day) {
+        Calendar calendar = Calendar.getInstance();
         int dayOfYear = day.orElse(0);
         if (date.isPresent()) {
-            Calendar calendar = Calendar.getInstance();
             calendar.setTime(date.get());
 
             dayOfYear = calendar.get(Calendar.DAY_OF_YEAR);
         }
-        if (dayOfYear == 0 || customerId <= 0) {
-            return ResponseEntity.badRequest().build();
+        if(dayOfYear > 0) {
+            calendar.set(Calendar.DAY_OF_YEAR, dayOfYear);
+            date = Optional.of(calendar.getTime());
         }
 
-        var dayStats = this.evenetsService.stats(customerId, dayOfYear);
+        if (dayOfYear == 0 || customerId <= 0) {
+            return new ResponseEntity<>("Missing Field", HttpStatus.BAD_REQUEST);
+        }
+
+        var dayStats = this.evenetsService.stats(customerId, dayOfYear, date.orElse(null));
         if (dayStats == null)
             return ResponseEntity.badRequest().build();
         else

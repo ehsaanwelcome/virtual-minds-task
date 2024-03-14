@@ -5,6 +5,7 @@ package com.learn.vm.models;
 //}
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Builder;
 import lombok.Data;
 
 @Data

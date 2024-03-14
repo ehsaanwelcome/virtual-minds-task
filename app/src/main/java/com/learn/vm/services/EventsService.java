@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 
 @Service
 public class EventsService {
@@ -132,7 +133,7 @@ public class EventsService {
         }
     }
 
-    public StatsResponse stats(long customerId, int day) {
+    public StatsResponse stats(long customerId, int day, Date date) {
         try (var conn = DriverManager.getConnection(postgresConn, postgresUser, postgresPass)) {
             var customerDayStatsQuery = conn.prepareStatement("""
                     select SUM(request_count) request_count, Sum(invalid_count) invalid_count
@@ -144,7 +145,7 @@ public class EventsService {
 
             ResultSet rs = customerDayStatsQuery.executeQuery();
             rs.next();
-            var customerDayStats = new StatsResponse.CustomerDayStats(customerId, rs.getLong("request_count"), rs.getLong("invalid_count"));
+            var customerDayStats = new StatsResponse.CustomerDayStats(rs.getLong("request_count"), rs.getLong("invalid_count"));
 
             var dayStatsQuery = conn.prepareStatement("""
                     select SUM(request_count) request_count, Sum(invalid_count) invalid_count
@@ -158,7 +159,7 @@ public class EventsService {
             rs.next();
             var dayStats = new StatsResponse.DayStats(rs.getLong("request_count"), rs.getLong("invalid_count"));
 
-            return new StatsResponse(customerDayStats, dayStats);
+            return new StatsResponse(customerId, day, date, customerDayStats, dayStats);
         } catch (SQLException e) {
             return null;
         }
