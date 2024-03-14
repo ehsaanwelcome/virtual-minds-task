@@ -45,7 +45,7 @@ services:
       - sh
       - -c
       - |
-        gradle build --no-daemon
+        gradle build -x test --no-daemon
         java -jar -Dspring.profiles.active=docker /home/app/build/libs/vm-app-0.0.1-SNAPSHOT.jar
         wait
   stats:
@@ -54,7 +54,6 @@ services:
     container_name: stats
     depends_on:
       - broker
-      - connect
     volumes:
       - ./stats:/home/app
     working_dir: /home/app
@@ -62,7 +61,7 @@ services:
       - sh
       - -c
       - |
-        gradle build --no-daemon
+        gradle build -x test --no-daemon
         sleep 1m
         java -jar -Dspring.profiles.active=docker /home/app/build/libs/vm-stats-0.0.1-SNAPSHOT.jar
         wait
@@ -129,6 +128,7 @@ services:
       - broker
       - schema-registry
       - postgres
+      - stats
     ports:
       - "8083:8083"
     volumes: 
@@ -159,6 +159,8 @@ services:
       - bash
       - -c
       - |
+        echo -e "\n--\n+> Installing JDBC Plugin"
+        sleep 10
         confluent-hub install --no-prompt confluentinc/kafka-connect-jdbc:10.7.5
         /etc/confluent/docker/run &
         echo "Waiting for Kafka Connect to start listening on kafka-connect"
@@ -169,8 +171,8 @@ services:
         nc -vz localhost 8083
         echo -e "\n--\n+> Creating Kafka JDBC Sink Connector"
         /data/connector.sh
+        echo -e "\n--\n+> Added Kafka JDBC Sink Connector"
         sleep infinity
-    
   control-center:
     image: confluentinc/cp-enterprise-control-center:7.6.0
     hostname: control-center
