@@ -7,7 +7,7 @@
 
 # How to Run
 1. Docker installation is prerequisite
-2. Run ```docker-compose up -d```, maksure that all the containers are running (wait around 2 mins) ![container](./data/container.png)
+2. Run ```docker-compose up -d```, maksure that all the containers are running (wait around 2 to 5 mins) ![container](./data/container.png)
 3. check ```http://localhost:8083/connectors``` if it returns ```[
 "jdbc"
 ]``` otherwise rerun ```docker-compose down -v connect``` and  ```docker-compose up -d connect``` and wait again for a min
